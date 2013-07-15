@@ -13,7 +13,7 @@ Cache Wordpress using Redis, the fastest way to date to cache Wordpress.
 ------
 Cache Wordpress using Redis, the fastest way to date to cache Wordpress.
 
-Please see [https://github.com/BenjaminAdams/wp-redis-cache](https://github.com/BenjaminAdams/wp-redis-cache) for the latest information and other needed setup files
+Please see [https://github.com/BenjaminAdams/wp-redis-cache](https://github.com/BenjaminAdams/wp-redis-cache) for the latest information and other needed setup files.
 
 ### Requirements
 ------
