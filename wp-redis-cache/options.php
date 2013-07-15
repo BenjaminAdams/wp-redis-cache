@@ -2,7 +2,7 @@
 /*
 Plugin Name: Wp Redis Cache
 Plugin URI: https://github.com/BenjaminAdams/wp-redis-cache
-Description: Cache Wordpress with redis
+Description: Cache Wordpress using Redis, the fastest way to date to cache Wordpress. 
 Version: 1.0
 Author: Benjamin Adams
 Author URI: http://dudelol.com
@@ -36,16 +36,15 @@ function edit_redis_options() {
     <h2>Wp-Redis Options</h2>
     <form method="post" action="options.php">
     <?php wp_nonce_field('update-options') ?>
+	
+	<p>This plugin does not work out of the box and requires additional steps.  Please follow these install instructions: <a target='_blank' href='https://github.com/BenjaminAdams/wp-redis-cache'>https://github.com/BenjaminAdams/wp-redis-cache</a></p>
+	
+	<p>If you do not have Redis installed on your machine this will NOT work! </p>
 
     <p><strong>Seconds of Caching:</strong><br />
 	How many seconds would you like to cache?  *Recommended 12 hours or 43200 seconds <br />
     <input type="text" name="wp-redis-cache-seconds" size="45" value="<?php echo get_option('wp-redis-cache-seconds'); ?>" /></p>
 
-    <p><strong>Secret String:</strong><br />
-	To refresh the cache of your post manually you will need to set a secret string so do can refresh manually like so:
-	<br />	http://example.com/post_name?refresh=secret_string.  <br />
-	<br />Important! You must change this in the index-wp-redis.php file<br />
-    <input type="text" name="wp-redis-secret" size="45" value="<?php echo get_option('wp-redis-secret'); ?>" /></p>
 
    
     <p><input type="submit" name="Submit" value="Update Options" /></p>

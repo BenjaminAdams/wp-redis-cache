@@ -1,8 +1,8 @@
 <?php
 
-$seconds_cache_redis = 60*60*12; // 12 hours by default
+$seconds_cache_redis = 60*60*12; // 12 hours by default, you can change in this in wp-admin options page
 $ip_of_your_website = '64.90.38.145';  //You must set this to the IP of your website
-$secret_string = "changeme";    /*This must be the same as in the wp-admin section if you want to manually refresh the cache
+$secret_string = "changeme";    /*This is if you want to manually refresh the cache
 								 ex: http://example.com/sample-post?refresh=changeme    */
 
  
@@ -23,7 +23,6 @@ $current_url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 $current_url = str_replace("?refresh=$secret_string", '', $current_url);  //clean up the URL
 $current_url = str_replace("&refresh=$secret_string", '', $current_url);
 $redis_key = md5($current_url);
-
 
 //Either manual refresh cache by adding ?refresh=secret_string after the URL or somebody posting a comment
 if (isset($_GET['refresh']) || $_GET['refresh']==$secret_string || ($_SERVER['HTTP_REFERER'] == $current_url && $_SERVER['REQUEST_URI'] != '/' && $_SERVER['REMOTE_ADDR'] != $ip_of_your_website)) {

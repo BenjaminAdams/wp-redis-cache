@@ -4,11 +4,11 @@ Cache Wordpress using Redis, the fastest way to date to cache Wordpress.
 
 ### Requirements
 ------
-[Wordpress](http://wordpress.org) - CMS framework/blogging system
-[Redis](http://redis.io/) - Key Value in memory caching
-[Predis](https://github.com/nrk/predis) - PHP api for Redis
+* [Wordpress](http://wordpress.org) - CMS framework/blogging system
+* [Redis](http://redis.io/) - Key Value in memory caching
+* [Predis](https://github.com/nrk/predis) - PHP api for Redis
 
-### Setup
+== Installation ==
 ------
 Install Redis, must have root access to your machine. On debian it's as simple as:
 ```bash
@@ -19,8 +19,10 @@ On other systems please refer to the [Redis website](http://redis.io/).
 Move the folder wp-redis-cache to the plugin directory and activate the plugin.  In the admin section you can set how long you will cache the post for.  By default it will cache the post for 12 hours.
 Note: This plugin is optional and is used to refresh the cache after you update a post/page
 
-Move the `index-wp-redis.php` to the root/base Wordpress directory
-Change the `index.php` to:
+Move the `index-wp-redis.php` to the root/base Wordpress directory.
+
+Move the `index.php` to the root/base Wordpress directory.  Or manually change the `index.php` to:
+
 ```php
 <?php
 require('index-wp-redis.php');
