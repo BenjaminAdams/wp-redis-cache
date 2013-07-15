@@ -1,5 +1,5 @@
 ## Wp Redis Cache
-------
+
 Cache Wordpress using Redis, the fastest way to date to cache Wordpress.
 
 ### Requirements
@@ -8,7 +8,7 @@ Cache Wordpress using Redis, the fastest way to date to cache Wordpress.
 * [Redis](http://redis.io/) - Key Value in memory caching
 * [Predis](https://github.com/nrk/predis) - PHP api for Redis
 
-== Installation ==
+### Installation 
 ------
 Install Redis, must have root access to your machine. On debian it's as simple as:
 ```bash
