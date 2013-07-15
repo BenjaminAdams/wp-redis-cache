@@ -15,5 +15,10 @@ $redis = new Predis_Client();
 
 $redis_key = md5($permalink);
 $redis->del($redis_key);
+
+//refresh the front page
+$frontPage = get_home_url() . "/";
+$redis_key = md5($frontPage);
+$redis->del($redis_key);
 }
 }

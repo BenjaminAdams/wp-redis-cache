@@ -1,5 +1,5 @@
 ## Wp Redis Cache
-======
+------
 Cache Wordpress using Redis, the fastest way to date to cache Wordpress.
 
 ### Requirements
@@ -23,8 +23,11 @@ Move the `index-wp-redis.php` to the root/base Wordpress directory
 Change the `index.php` to:
 ```php
 <?php
-require('index-wp-redis.php')
+require('index-wp-redis.php');
+?>
 ```
+In `index-wp-redis.php` change `$ip_of_your_website` to the IP of your server
+
 *Note: Sometimes when you upgrade Wordpress it will replace over your `index.php` file and you will have to redo this step.  This is the reason we don't just replace the contents of `index-wp-redis.php` with `index.php`.
 
 We do this because Wordpress is no longer in charge of displaying our posts.  Redis will now server the post if it is in the cache.  If the post is not in the Redis cache it will then call Wordpress to serve the page and then cache it for the next pageload
@@ -35,6 +38,7 @@ We do this because Wordpress is no longer in charge of displaying our posts.  Re
 I welcome you to compare the page load times of this caching system with other popular Caching plugins such as [Wp Super Cache](http://wordpress.org/plugins/wp-super-cache/) and [W3 Total Cache](http://wordpress.org/plugins/w3-total-cache/)
 
 With a fresh Wordpress install:
+
 Wp Super Cache
 ```
 Page generated in 0.318 seconds.
