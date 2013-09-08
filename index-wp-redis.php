@@ -69,6 +69,8 @@ if (isset($_GET['refresh']) || $_GET['refresh'] == $secret_string || ($_SERVER['
     
     
     
+} else if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website && strstr($current_url, 'preview=true') == true) {
+    require('./wp-blog-header.php');
 }
  // else {   // This is what your server should get if no cache exists  //depricated, as the ob_start() is cleaner
     // require('./wp-blog-header.php');
