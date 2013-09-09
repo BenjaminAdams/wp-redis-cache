@@ -16,6 +16,12 @@ sudo apt-get install redis-server
 ```
 On other systems please refer to the [Redis website](http://redis.io/).
 
+You can install the pecl extension (faster)
+```
+apt-get install php5-redis
+```
+or use [Predis](https://github.com/nrk/predis)
+
 Move the folder wp-redis-cache to the plugin directory and activate the plugin.  In the admin section you can set how long you will cache the post for.  By default it will cache the post for 12 hours.
 Note: This plugin is optional and is used to refresh the cache after you update a post/page
 
