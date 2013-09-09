@@ -27,21 +27,21 @@ $current_url = str_replace("&refresh=$secret_string", '', $current_url);
 $redis_key = md5($current_url);
 
 try {
-	// check if PECL Extension is available
-	if (class_exists('Redis')) {
-		$redis = new Redis();
-		
-		// Sockets can be used as well '/tmp/redis.sock'
-		// documentation can be found at https://github.com/nicolasff/phpredis/#connection
-		$redis->connect('127.0.0.1');
-		
-	} else // Fallback to predis5.2.php
-	{
-		include("wp-content/plugins/wp-redis-cache/predis5.2.php"); //we need this to use Redis inside of PHP
-		$redis = new Predis_Client();
-	}
+    // check if PECL Extension is available
+    if (class_exists('Redis')) {
+        $redis = new Redis();
+        
+        // Sockets can be used as well '/tmp/redis.sock'
+        // documentation can be found at https://github.com/nicolasff/phpredis/#connection
+        $redis->connect('127.0.0.1');
+        
+    } else // Fallback to predis5.2.php
+    {
+        include("wp-content/plugins/wp-redis-cache/predis5.2.php"); //we need this to use Redis inside of PHP
+        $redis = new Predis_Client();
+    }
 } catch (Exception $e) {
-	$redisError=true;
+    $redisError=true;
 }
 
 //Either manual refresh cache by adding ?refresh=secret_string after the URL or somebody posting a comment
@@ -58,11 +58,7 @@ if (!isset($redisError) && (isset($_GET['refresh']) || $_GET['refresh'] == $secr
     // If the cache does not exist lets display the user the normal page without cache, and then fetch a new cache page
 } else if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website && strstr($current_url, 'preview=true') == false) {
     
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $isPOST = 1;
-    } else {
-        $isPOST = 0;
-    }
+    $isPOST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? 1 : 0;
     
     $loggedIn = preg_match("/wordpress_logged_in/", var_export($_COOKIE, true));
     if ($isPost == 0 && $loggedIn == 0) {
