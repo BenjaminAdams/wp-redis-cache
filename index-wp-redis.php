@@ -38,7 +38,7 @@ try {
         
     } else // Fallback to predis5.2.php
     {
-        include("wp-content/plugins/wp-redis-cache/predis5.2.php"); //we need this to use Redis inside of PHP
+        include_once("wp-content/plugins/wp-redis-cache/predis5.2.php"); //we need this to use Redis inside of PHP
         $redis = new Predis_Client();
     }
     

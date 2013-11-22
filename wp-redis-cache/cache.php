@@ -10,7 +10,8 @@ if($new == "publish")
 {
 $permalink = get_permalink( $post->ID );
 
-include("predis5.2.php");  //we need this to use Redis inside of PHP
+// aaronstpierre: this needs to be include_once so as not to cauase a redeclaration error
+include_once("predis5.2.php");  //we need this to use Redis inside of PHP
 $redis = new Predis_Client();
 
 $redis_key = md5($permalink);
