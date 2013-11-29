@@ -23,8 +23,11 @@ $secret_string       = "changeme";
 if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
     $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
 }
+ 
+if(!defined('WP_USE_THEMES')) {
+    define('WP_USE_THEMES', true);
+}
 
-define('WP_USE_THEMES', true);
 $current_url = str_replace(array("?refresh=${secret_string}","&refresh=${secret_string}"), '', "http://${_SERVER['HTTP_HOST']}${_SERVER['REQUEST_URI']}"); //clean up the URL
 $redis_key = md5($current_url);
 
