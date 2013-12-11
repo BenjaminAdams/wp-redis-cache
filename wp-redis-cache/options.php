@@ -137,13 +137,15 @@ function edit_redis_options() {
     <p><strong>Seconds of Caching:</strong><br />
 	How many seconds would you like to cache?  *Recommended 12 hours or 43200 seconds <br />
     <input type="text" name="wp-redis-cache-seconds" size="45" value="<?php echo get_option('wp-redis-cache-seconds'); ?>" /></p>
-
-
-   
+ 
+    <p><strong>Cache unlimeted:</strong><br />
+		If this options set the cache never expire. This option overiedes the setting "Seconds of Caching"<br />
+    <input type="checkbox" name="wp-redis-cache-unlimited" size="45" value="true" <?php checked('true', get_option('wp-redis-cache-unlimited')); ?>/></p>
+	  
     <p><input type="submit" name="Submit" value="Update Options" /></p>
 
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="wp-redis-cache-seconds,wp-redis-secret" />
+    <input type="hidden" name="page_options" value="wp-redis-cache-seconds,wp-redis-cache-unlimited" />
 
     </form>
     </div>
