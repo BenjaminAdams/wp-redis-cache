@@ -9,21 +9,24 @@ function getMicroTime($t)
     return ((float) $usec + (float) $sec);
 }
 
-// 12 hours by default, you can change in this in wp-admin options page
-$seconds_cache_redis = 60 * 60 * 12;
 
-//You must set this to the IP of your website
-$ip_of_your_website  = '127.0.0.1'; 
+$debug               =  false;
 
-/*This is if you want to manually refresh the cache
-ex: http://example.com/sample-post?refresh=changeme    */
-$secret_string       = "changeme";
+$ip_of_your_website  =  '127.0.0.1';
+$secret_string       =  'changeme';
+
+
+
+if(!defined('WP_USE_THEMES')) {
+    define('WP_USE_THEMES', true);
+}
 
 // so we don't confuse the cloudflare server 
 if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
     $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
 }
  
+
 if(!defined('WP_USE_THEMES')) {
     define('WP_USE_THEMES', true);
 }
@@ -68,16 +71,25 @@ try {
             $html_of_page = ob_get_contents();
             ob_end_clean();
             echo $html_of_page;
-            
-			//if the user has the seconds defined in the admin section use it
-            $usr_seconds = get_option('wp-redis-cache-seconds');
-            if (isset($usr_seconds) && is_numeric($usr_seconds)) {
-                $seconds_cache_redis = $usr_seconds;
-            }
+			
+			$unlimited			 =  get_option('wp-redis-cache-debug',false);
+			$seconds_cache_redis =  get_option('wp-redis-cache-seconds',43200);
+			if (!is_numeric($seconds_cache_redis)) {
+				$seconds_cache_redis = 43200;
+			}
+			
 			
 			// When a page displays after an "HTTP 404: Not Found" error occurs, do not cache
-            if (!is_404()) {
-                $redis->setex($redis_key, $seconds_cache_redis, $html_of_page);
+			// When the search was used, do not cache
+            if (!is_404() && !is_search())  {
+                if ($unlimited) {
+                	$redis->setex($redis_key, $html_of_page);
+                }
+				else
+				{
+					$redis->setex($redis_key, $seconds_cache_redis, $html_of_page);
+				}
+
             }
         } else //either the user is logged in, or is posting a comment, show them uncached
             {
@@ -99,4 +111,11 @@ if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website) {
     $end  = microtime();
     $time = (@getMicroTime($end) - @getMicroTime($start));
     echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->";
+	if ($debug) {
+		echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->";
+		echo "<!-- wp-redis-cache-secret  = " . $secret_string . "-->";
+		echo "<!-- wp-redis-cache-ip  = " . $ip_of_your_website . "-->";
+		echo "<!-- wp-redis-cache-unlimited = " . $unlimited . "-->";
+		echo "<!-- wp-redis-cache-debug  = " . $debug . "-->";
+	}
 }
