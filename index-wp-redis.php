@@ -55,7 +55,7 @@ try {
     } else if ($redis->exists($redis_key)) {
 		$cache  = true;
         $html_of_page = $redis->get($redis_key);
-        echo $html_of_page;
+		echo $html_of_page;
         
      // If the cache does not exist lets display the user the normal page without cache, and then fetch a new cache page
     } else if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website && strstr($current_url, 'preview=true') == false) {
@@ -68,7 +68,7 @@ try {
             require('./wp-blog-header.php');
             $html_of_page = ob_get_contents();
             ob_end_clean();
-            echo $html_of_page;
+			echo $html_of_page;
 			
 			$unlimited			 =  get_option('wp-redis-cache-debug',false);
 			$seconds_cache_redis =  get_option('wp-redis-cache-seconds',43200);
