@@ -143,7 +143,7 @@ function edit_redis_options() {
     <input type="checkbox" name="wp-redis-cache-unlimited" size="45" value="true" <?php checked('true', get_option('wp-redis-cache-unlimited')); ?>/></p>
 	  
     <p><input type="submit" name="Submit" value="Update Options" /></p>
-
+	<p><input type="button" id="WPRedisClearCache" name="WPRedisClearCache" value="Clear Cache"></p>
     <input type="hidden" name="action" value="update" />
     <input type="hidden" name="page_options" value="wp-redis-cache-seconds,wp-redis-cache-unlimited" />
 

@@ -10,16 +10,13 @@ function getMicroTime($t)
 }
 
 
-$debug               =  false;
-
+$debug               =  true;
+$cache				 =  false;
 $ip_of_your_website  =  '127.0.0.1';
 $secret_string       =  'changeme';
 
 
 
-if(!defined('WP_USE_THEMES')) {
-    define('WP_USE_THEMES', true);
-}
 
 // so we don't confuse the cloudflare server 
 if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
@@ -56,8 +53,9 @@ try {
         
     // This page is cached, lets display it
     } else if ($redis->exists($redis_key)) {
+		$cache  = true;
         $html_of_page = $redis->get($redis_key);
-        echo $html_of_page;
+		echo $html_of_page;
         
      // If the cache does not exist lets display the user the normal page without cache, and then fetch a new cache page
     } else if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website && strstr($current_url, 'preview=true') == false) {
@@ -70,7 +68,7 @@ try {
             require('./wp-blog-header.php');
             $html_of_page = ob_get_contents();
             ob_end_clean();
-            echo $html_of_page;
+			echo $html_of_page;
 			
 			$unlimited			 =  get_option('wp-redis-cache-debug',false);
 			$seconds_cache_redis =  get_option('wp-redis-cache-seconds',43200);
@@ -81,9 +79,9 @@ try {
 			
 			// When a page displays after an "HTTP 404: Not Found" error occurs, do not cache
 			// When the search was used, do not cache
-            if (!is_404() && !is_search())  {
+            if ((!is_404()) and (!is_search()))  {
                 if ($unlimited) {
-                	$redis->setex($redis_key, $html_of_page);
+                	$redis->set($redis_key, $html_of_page);
                 }
 				else
 				{
@@ -106,16 +104,16 @@ try {
     require('./wp-blog-header.php');
 }
 
-if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website) {
-    // How long did it take to load the page? (CloudFlare may strip out comments)
-    $end  = microtime();
-    $time = (@getMicroTime($end) - @getMicroTime($start));
-    echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->";
-	if ($debug) {
-		echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->";
-		echo "<!-- wp-redis-cache-secret  = " . $secret_string . "-->";
-		echo "<!-- wp-redis-cache-ip  = " . $ip_of_your_website . "-->";
-		echo "<!-- wp-redis-cache-unlimited = " . $unlimited . "-->";
-		echo "<!-- wp-redis-cache-debug  = " . $debug . "-->";
-	}
+
+$end  = microtime();
+$time = (@getMicroTime($end) - @getMicroTime($start));
+if ($debug) {
+	echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->";
+	echo "<!-- Site was cached  = " . $cache . " -->";
+	echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->";
+	echo "<!-- wp-redis-cache-secret  = " . $secret_string . "-->";
+	echo "<!-- wp-redis-cache-ip  = " . $ip_of_your_website . "-->";
+	echo "<!-- wp-redis-cache-unlimited = " . $unlimited . "-->";
+	echo "<!-- wp-redis-cache-debug  = " . $debug . "-->";
 }
+
