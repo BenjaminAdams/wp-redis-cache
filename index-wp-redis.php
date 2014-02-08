@@ -31,6 +31,10 @@ if(!defined('WP_USE_THEMES')) {
 $current_url = str_replace(array("?refresh=${secret_string}","&refresh=${secret_string}"), '', "http://${_SERVER['HTTP_HOST']}${_SERVER['REQUEST_URI']}"); //clean up the URL
 $redis_key = md5($current_url);
 
+// check if the user was  logged in to wp
+$cookie = var_export($_COOKIE, true);
+$loggedin = preg_match("/wordpress_logged_in/", $cookie);
+
 try {
     // check if PECL Extension is available
     if (class_exists('Redis')) {
@@ -50,7 +54,12 @@ try {
         
         $redis->del($redis_key);
         require('./wp-blog-header.php');
-        
+    
+	// if the user was logged in, don't show a cached site    
+	} else if ($loggedin) {
+		
+		require('./wp-blog-header.php');
+		
     // This page is cached, lets display it
     } else if ($redis->exists($redis_key)) {
 		$cache  = true;
@@ -62,8 +71,7 @@ try {
         
         $isPOST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? 1 : 0;
         
-        $loggedIn = preg_match("/wordpress_logged_in/", var_export($_COOKIE, true));
-        if ($isPost == 0 && $loggedIn == 0) {
+        if ($isPost == 0) {
             ob_start();
             require('./wp-blog-header.php');
             $html_of_page = ob_get_contents();
@@ -89,8 +97,8 @@ try {
 				}
 
             }
-        } else //either the user is logged in, or is posting a comment, show them uncached
-            {
+		//either the user is logged in, or is posting a comment, show them uncached
+        } else {
             require('./wp-blog-header.php');
         }
         
