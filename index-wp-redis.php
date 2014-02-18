@@ -17,7 +17,8 @@ function requestHasSecret($secret) {
 }
 
 function isRemotePageLoad($currentUrl, $websiteIp) {
-    return ($_SERVER['HTTP_REFERER'] == $currentUrl 
+    return (isset($_SERVER['HTTP_REFERER'])
+            && $_SERVER['HTTP_REFERER']== $currentUrl
             && $_SERVER['REQUEST_URI'] != '/' 
             && $_SERVER['REMOTE_ADDR'] != $websiteIp);
 }
@@ -39,11 +40,10 @@ function getCleanUrl($secret) {
 
 $debug                  =  true;
 $cache                  =  false;
-$ip_of_your_website     =  '127.0.0.1';
+$websiteIp              =  '127.0.0.1';
 $reddis_server          = '127.0.0.1';
 $secret_string          =  'changeme';
-$unlimited = get_option('wp-redis-cache-debug',false);
-$seconds_cache_redis = get_option('wp-redis-cache-seconds',43200);
+
 
 handleCDNRemoteAddressing();
 
@@ -68,10 +68,12 @@ try {
     }
     
     //Either manual refresh cache by adding ?refresh=secret_string after the URL or somebody posting a comment
-    if (refreshHasSecret() || requestHasSecret() || isRemotePageLoad()) {
+    if (refreshHasSecret($secret_string) || requestHasSecret($secret_string) || isRemotePageLoad($current_url, $websiteIp)) {
         $redis->del($redis_key);
         require('./wp-blog-header.php');
         
+        $unlimited = get_option('wp-redis-cache-debug',false);
+        $seconds_cache_redis = get_option('wp-redis-cache-seconds',43200);
     // This page is cached, lets display it
     } else if ($redis->exists($redis_key)) {
         $cache  = true;
