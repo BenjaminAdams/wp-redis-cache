@@ -3,51 +3,72 @@
 // Start the timer so we can track the page load time
 $start = microtime();
 
-function getMicroTime($t)
-{
-    list($usec, $sec) = explode(" ", $t);
+function getMicroTime($time) {
+    list($usec, $sec) = explode(" ", $time);
     return ((float) $usec + (float) $sec);
 }
 
-
-$debug               =  true;
-$cache               =  false;
-$ip_of_your_website  =  '127.0.0.1';
-$secret_string       =  'changeme';
-
-
-
-
-// so we don't confuse the cloudflare server 
-if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-    $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+function refreshHasSecret($secret) {
+    return isset($_GET['refresh']) && $_GET['refresh'] == $secret;
 }
- 
+
+function requestHasSecret($secret) {
+    return strpos($_SERVER['REQUEST_URI'],"refresh=${secret}")!==false;
+}
+
+function isRemotePageLoad($currentUrl, $websiteIp) {
+    return ($_SERVER['HTTP_REFERER'] == $currentUrl 
+            && $_SERVER['REQUEST_URI'] != '/' 
+            && $_SERVER['REMOTE_ADDR'] != $websiteIp);
+}
+
+function handleCDNRemoteAddressing() {
+    // so we don't confuse the cloudflare server 
+    if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+    }
+}
+
+function getCleanUrl($secret) {
+    $replaceKeys = array("?refresh=${secret}","&refresh=${secret}");
+    $url = "http://${_SERVER['HTTP_HOST']}${_SERVER['REQUEST_URI']}";
+    $current_url = str_replace($replaceKeys, '', $url);
+    return $current_url;
+
+}
+
+$debug                  =  true;
+$cache                  =  false;
+$ip_of_your_website     =  '127.0.0.1';
+$reddis_server          = '127.0.0.1';
+$secret_string          =  'changeme';
+$unlimited = get_option('wp-redis-cache-debug',false);
+$seconds_cache_redis = get_option('wp-redis-cache-seconds',43200);
+
+handleCDNRemoteAddressing();
 
 if(!defined('WP_USE_THEMES')) {
     define('WP_USE_THEMES', true);
 }
 
-$current_url = str_replace(array("?refresh=${secret_string}","&refresh=${secret_string}"), '', "http://${_SERVER['HTTP_HOST']}${_SERVER['REQUEST_URI']}"); //clean up the URL
+$current_url = getCleanUrl($secret_string);
 $redis_key = md5($current_url);
 
 try {
     // check if PECL Extension is available
     if (class_exists('Redis')) {
         $redis = new Redis();
-        
+
         // Sockets can be used as well. Documentation @ https://github.com/nicolasff/phpredis/#connection
-        $redis->connect('127.0.0.1');
+        $redis->connect($reddis_server);
         
-    } else // Fallback to predis5.2.php
-    {
+    } else { // Fallback to predis5.2.php
         include_once("wp-content/plugins/wp-redis-cache/predis5.2.php"); //we need this to use Redis inside of PHP
         $redis = new Predis_Client();
     }
     
     //Either manual refresh cache by adding ?refresh=secret_string after the URL or somebody posting a comment
-    if (isset($_GET['refresh']) || $_GET['refresh'] == $secret_string || strpos($_SERVER['REQUEST_URI'],"refresh=${secret_string}")!==false || ($_SERVER['HTTP_REFERER'] == $current_url && $_SERVER['REQUEST_URI'] != '/' && $_SERVER['REMOTE_ADDR'] != $ip_of_your_website)) {
-        
+    if (refreshHasSecret() || requestHasSecret() || isRemotePageLoad()) {
         $redis->del($redis_key);
         require('./wp-blog-header.php');
         
@@ -70,8 +91,6 @@ try {
             ob_end_clean();
             echo $html_of_page;
 
-            $unlimited             =  get_option('wp-redis-cache-debug',false);
-            $seconds_cache_redis =  get_option('wp-redis-cache-seconds',43200);
             if (!is_numeric($seconds_cache_redis)) {
                 $seconds_cache_redis = 43200;
             }
@@ -99,7 +118,6 @@ try {
 } catch (Exception $e) {
     require('./wp-blog-header.php');
 }
-
 
 $end  = microtime();
 $time = (@getMicroTime($end) - @getMicroTime($start));
