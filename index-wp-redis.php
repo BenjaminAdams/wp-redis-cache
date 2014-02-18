@@ -11,7 +11,7 @@ function getMicroTime($t)
 
 
 $debug               =  true;
-$cache				 =  false;
+$cache               =  false;
 $ip_of_your_website  =  '127.0.0.1';
 $secret_string       =  'changeme';
 
@@ -53,10 +53,10 @@ try {
         
     // This page is cached, lets display it
     } else if ($redis->exists($redis_key)) {
-		$cache  = true;
+        $cache  = true;
         $html_of_page = $redis->get($redis_key);
-		echo $html_of_page;
-        
+        echo $html_of_page;
+
      // If the cache does not exist lets display the user the normal page without cache, and then fetch a new cache page
     } else if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website && strstr($current_url, 'preview=true') == false) {
         
@@ -68,36 +68,32 @@ try {
             require('./wp-blog-header.php');
             $html_of_page = ob_get_contents();
             ob_end_clean();
-			echo $html_of_page;
-			
-			$unlimited			 =  get_option('wp-redis-cache-debug',false);
-			$seconds_cache_redis =  get_option('wp-redis-cache-seconds',43200);
-			if (!is_numeric($seconds_cache_redis)) {
-				$seconds_cache_redis = 43200;
-			}
-			
-			
-			// When a page displays after an "HTTP 404: Not Found" error occurs, do not cache
-			// When the search was used, do not cache
+            echo $html_of_page;
+
+            $unlimited             =  get_option('wp-redis-cache-debug',false);
+            $seconds_cache_redis =  get_option('wp-redis-cache-seconds',43200);
+            if (!is_numeric($seconds_cache_redis)) {
+                $seconds_cache_redis = 43200;
+            }
+
+            // When a page displays after an "HTTP 404: Not Found" error occurs, do not cache
+            // When the search was used, do not cache
             if ((!is_404()) and (!is_search()))  {
                 if ($unlimited) {
-                	$redis->set($redis_key, $html_of_page);
+                    $redis->set($redis_key, $html_of_page);
+                } else {
+                    $redis->setex($redis_key, $seconds_cache_redis, $html_of_page);
                 }
-				else
-				{
-					$redis->setex($redis_key, $seconds_cache_redis, $html_of_page);
-				}
 
             }
-        } else //either the user is logged in, or is posting a comment, show them uncached
-            {
+        } else { //either the user is logged in, or is posting a comment, show them uncached
             require('./wp-blog-header.php');
         }
         
     } else if ($_SERVER['REMOTE_ADDR'] != $ip_of_your_website && strstr($current_url, 'preview=true') == true) {
         require('./wp-blog-header.php');
     }
-     // else {   // This is what your server should get if no cache exists  //depricated, as the ob_start() is cleaner
+     // else {   // This is what your server should get if no cache exists  //deprecated, as the ob_start() is cleaner
         // require('./wp-blog-header.php');
     // }
 } catch (Exception $e) {
@@ -108,12 +104,12 @@ try {
 $end  = microtime();
 $time = (@getMicroTime($end) - @getMicroTime($start));
 if ($debug) {
-	echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->";
-	echo "<!-- Site was cached  = " . $cache . " -->";
-	echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->";
-	echo "<!-- wp-redis-cache-secret  = " . $secret_string . "-->";
-	echo "<!-- wp-redis-cache-ip  = " . $ip_of_your_website . "-->";
-	echo "<!-- wp-redis-cache-unlimited = " . $unlimited . "-->";
-	echo "<!-- wp-redis-cache-debug  = " . $debug . "-->";
+    echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->";
+    echo "<!-- Site was cached  = " . $cache . " -->";
+    echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->";
+    echo "<!-- wp-redis-cache-secret  = " . $secret_string . "-->";
+    echo "<!-- wp-redis-cache-ip  = " . $ip_of_your_website . "-->";
+    echo "<!-- wp-redis-cache-unlimited = " . $unlimited . "-->";
+    echo "<!-- wp-redis-cache-debug  = " . $debug . "-->";
 }
 
