@@ -135,9 +135,10 @@ try {
     echo "something went wrong";
 }
 
-$end  = microtime();
-$time = (@getMicroTime($end) - @getMicroTime($start));
 if ($debug) {
+    $end  = microtime();
+    $time = (@getMicroTime($end) - @getMicroTime($start));
+
     echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->\n";
     echo "<!-- Site was cached  = " . $cache . " -->\n";
     if (isset($seconds_cache_redis)) {
