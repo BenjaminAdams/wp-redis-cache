@@ -40,7 +40,10 @@ function getCleanUrl($secret) {
 $debug          = true;
 $cache          = true;
 $websiteIp      = '127.0.0.1';
-$reddis_server  = '127.0.0.1';
+// if you use sockets, set this to true and use $redis_server for socket path
+$sockets        = false;
+// in case of sockets something like /home/user/.redis/sock
+$redis_server   = '127.0.0.1';
 $secret_string  = 'changeme';
 $current_url    = getCleanUrl($secret_string);
 $redis_key      = md5($current_url);
@@ -60,7 +63,7 @@ try {
         $redis = new Redis();
 
         // Sockets can be used as well. Documentation @ https://github.com/nicolasff/phpredis/#connection
-        $redis->connect($reddis_server);
+        $redis->connect($redis_server);
         
     } else { // Fallback to predis5.2.php
 
@@ -68,7 +71,15 @@ try {
             echo "<!-- using predis as a backup -->\n";
         }
         include_once("wp-content/plugins/wp-redis-cache/predis5.2.php"); //we need this to use Redis inside of PHP
-        $redis = new Predis_Client();
+    
+        if ($sockets) {
+            $redis = new Predis_Client(array(
+                                        'scheme' => 'unix',
+                                        'path'   => $redis_server
+                                        ));
+        } else {
+            $redis = new Predis_Client();
+        }
     }
     
     //Either manual refresh cache by adding ?refresh=secret_string after the URL or somebody posting a comment
@@ -132,7 +143,7 @@ try {
     // }
 } catch (Exception $e) {
     //require('./wp-blog-header.php');
-    echo "something went wrong";
+    echo "Something went wrong: " . $e->getMessage();
 }
 
 $end  = microtime();
