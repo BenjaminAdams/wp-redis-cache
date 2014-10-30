@@ -17,11 +17,13 @@ function refresh_wp_redis_cache( $new, $old, $post )
 
 		$redis_key = md5($permalink);
 		$redis->del($redis_key);
+    $redis->del("ssl_".$redis_key);
 
 		//refresh the front page
 		$frontPage = get_home_url() . "/";
 		$redis_key = md5($frontPage);
 		$redis->del($redis_key);
+    $redis->del("ssl_".$redis_key);
 	}
 }
 
@@ -40,6 +42,7 @@ function clear_wp_redis_cache()
 		$redis_key = md5($permalink);
 		if (($redis->exists($redis_key)) == true ) {
 			$redis->del($redis_key);
+      $redis->del("ssl_".$redis_key);
 			$i++; 
 		}
 		
@@ -57,7 +60,7 @@ jQuery(document).ready(function($) {
 
 	jQuery('#WPRedisClearCache').click(function(){
 		var data = {
-			action: 'clear_wp_redis_cache',
+			action: 'clear_wp_redis_cache'
 		};
 
 		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
