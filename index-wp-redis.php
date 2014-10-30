@@ -46,7 +46,9 @@ $sockets        = false;
 $redis_server   = '127.0.0.1';
 $secret_string  = 'changeme';
 $current_url    = getCleanUrl($secret_string);
-$redis_key      = md5($current_url);
+// used to prefix ssl cached pages
+$isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
+$redis_key      = $isSSL.md5($current_url);
 
 handleCDNRemoteAddressing();
 
@@ -88,6 +90,7 @@ try {
             echo "<!-- manual refresh was required -->\n";
         }
         $redis->del($redis_key);
+        $redis->del("ssl_".$redis_key);
         require('./wp-blog-header.php');
         
         $unlimited = get_option('wp-redis-cache-debug',false);
