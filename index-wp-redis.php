@@ -123,9 +123,10 @@ try {
         $loggedIn = preg_match("/wordpress_logged_in/", var_export($_COOKIE, true));
         if (!$isPOST && !$loggedIn) {
             ob_start();
+            $level = ob_get_level();
             require( $wp_blog_header_path );
-            $html_of_page = ob_get_contents();
-            ob_end_clean();
+            while(ob_get_level() > $level) ob_end_flush();
+            $html_of_page = ob_get_clean(); // ob_get_clean also closes the OB
             echo $html_of_page;
 
             if (!is_numeric($seconds_cache_redis)) {
