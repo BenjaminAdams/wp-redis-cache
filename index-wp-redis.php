@@ -1,6 +1,6 @@
 <?php
 
-require_once("wp-redis-config.php")
+require_once("wp-redis-config.php");
 // Start the timer so we can track the page load time
 $start = microtime();
 
