@@ -21,8 +21,10 @@ function get_redis_server() {
 function refresh_wp_redis_cache( $new, $old, $post )
 {
     $redis = get_redis_server();
-    $redis->del($_SERVER['HTTP_HOST'].'_*');
-    $redis->del($_SERVER['HTTP_HOST']."_ssl_*");
+    foreach($redis->keys($_SERVER['HTTP_HOST'].'_*') as $key) {
+            $redis->del($key);
+    }
+
 }
 
 // clears the whole cache
