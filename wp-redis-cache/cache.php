@@ -31,10 +31,13 @@ function refresh_wp_redis_cache( $new, $old, $post )
 function clear_wp_redis_cache()
 {
     $redis = get_redis_server();
-    $redis->del($_SERVER['HTTP_HOST'].'_*');
-    $redis->del($_SERVER['HTTP_HOST']."_ssl_*");
+    $i = 0;
+    foreach($redis->keys($_SERVER['HTTP_HOST'].'_*') as $key) {
+        $redis->del($key);
+        $i++;
+    }
 	
-	echo " of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
+	echo $i . " of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
 	die();
 }
 
