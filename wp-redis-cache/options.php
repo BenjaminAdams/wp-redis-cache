@@ -41,21 +41,27 @@ function edit_redis_options() {
 	
 	<p>This plugin does not work out of the box and requires additional steps.<br />
 	Please follow these install instructions: <a target='_blank' href='https://github.com/BenjaminAdams/wp-redis-cache'>https://github.com/BenjaminAdams/wp-redis-cache</a></p>
-	
-	<p>If you do not have Redis installed on your machine this will NOT work! </p>
+
+    <p><strong>Debug:</strong><br />
+	If this options set debug text are published in html.<br />
+    <input type="checkbox" name="wp-redis-cache-debug" size="45" value="true" <?php checked('true', get_option('wp-redis-cache-debug')); ?>/></p>
+
+    <p><strong>Redis-Server:</strong><br />
+	If Redis-Server is not on the same machine as the wordpress-instance<br />
+    <input type="text" name="wp-redis-cache-server" size="45" value="<?php echo get_option('wp-redis-cache-server'); ?>" /></p>
 
     <p><strong>Seconds of Caching:</strong><br />
 	How many seconds would you like to cache?  *Recommended 12 hours or 43200 seconds <br />
     <input type="text" name="wp-redis-cache-seconds" size="45" value="<?php echo get_option('wp-redis-cache-seconds'); ?>" /></p>
  
     <p><strong>Cache unlimited:</strong><br />
-		If this options set the cache never expire. This option overiedes the setting "Seconds of Caching"<br />
+		If this options set the cache never expire. This option overrides the setting "Seconds of Caching"<br />
     <input type="checkbox" name="wp-redis-cache-unlimited" size="45" value="true" <?php checked('true', get_option('wp-redis-cache-unlimited')); ?>/></p>
 	  
     <p><input type="submit" name="Submit" value="Update Options" /></p>
 	<p><input type="button" id="WPRedisClearCache" name="WPRedisClearCache" value="Clear Cache"></p>
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="wp-redis-cache-seconds,wp-redis-cache-unlimited" />
+    <input type="hidden" name="page_options" value="wp-redis-cache-debug,wp-redis-cache-server,wp-redis-cache-seconds,wp-redis-cache-unlimited" />
 
     </form>
     </div>

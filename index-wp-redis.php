@@ -1,5 +1,6 @@
 <?php
 
+require_once("wp-redis-config.php");
 // Start the timer so we can track the page load time
 $start = microtime();
 
@@ -38,18 +39,11 @@ function getCleanUrl($secret) {
 }
 
 $wp_blog_header_path = dirname( __FILE__ ) . '/wp-blog-header.php';
-$debug          = true;
-$cache          = true;
-$websiteIp      = '127.0.0.1';
-// if you use sockets, set this to true and use $redis_server for socket path
-$sockets        = false;
-// in case of sockets something like /home/user/.redis/sock
-$redis_server   = '127.0.0.1';
-$secret_string  = 'changeme';
 $current_url    = getCleanUrl($secret_string);
 // used to prefix ssl cached pages
 $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
-$redis_key      = $isSSL.md5($current_url);
+$redis_key      = $_SERVER['HTTP_HOST'].'_'.$isSSL.md5($current_url);
+
 
 handleCDNRemoteAddressing();
 
@@ -100,8 +94,9 @@ try {
         $redis->del($redis_key);
         $redis->del("ssl_".$redis_key);
         require( $wp_blog_header_path );
-        
-        $unlimited = get_option('wp-redis-cache-debug',false);
+
+         
+        $unlimited = get_option('wp-redis-cache-unlimited',false);
         $seconds_cache_redis = get_option('wp-redis-cache-seconds',43200);
     // This page is cached, lets display it
     } else if ($redis->exists($redis_key)) {
@@ -149,6 +144,11 @@ try {
         
     } else if ($_SERVER['REMOTE_ADDR'] != $websiteIp && strstr($current_url, 'preview=true') == true) {
         require( $wp_blog_header_path );
+    } else {
+        if ($debug) {
+            echo "<!-- Output UNCACHED-->\n";
+        }
+        require( $wp_blog_header_path );
     }
      // else {   // This is what your server should get if no cache exists  //deprecated, as the ob_start() is cleaner
         //require( $wp_blog_header_path );
@@ -163,6 +163,7 @@ $time = (@getMicroTime($end) - @getMicroTime($start));
 if ($debug) {
     echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->\n";
     echo "<!-- Site was cached  = " . $cache . " -->\n";
+    echo "<!-- wp-redis-cache-key  = " . $redis_key . "-->\n";
     if (isset($seconds_cache_redis)) {
         echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->\n";
     }
