@@ -42,7 +42,7 @@ $wp_blog_header_path = dirname( __FILE__ ) . '/wp-blog-header.php';
 $current_url    = getCleanUrl($secret_string);
 // used to prefix ssl cached pages
 $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
-$redis_key      = $isSSL.md5(${_SERVER['HTTP_HOST']}.'_'.$current_url);
+$redis_key      = $isSSL.md5($_SERVER['HTTP_HOST'].'_'.$current_url);
 
 handleCDNRemoteAddressing();
 
