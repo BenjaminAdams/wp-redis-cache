@@ -42,7 +42,7 @@ $wp_blog_header_path = dirname( __FILE__ ) . '/wp-blog-header.php';
 $current_url    = getCleanUrl($secret_string);
 // used to prefix ssl cached pages
 $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
-$redis_key      = $isSSL.md5($_SERVER['HTTP_HOST'].'_'.$current_url);
+$redis_key      = $_SERVER['HTTP_HOST'].'_'.$isSSL.md5(.$current_url);
 
 handleCDNRemoteAddressing();
 
@@ -106,7 +106,6 @@ try {
         echo $html_of_page;
 
      // If the cache does not exist lets display the user the normal page without cache, and then fetch a new cache page
-    } else if ($_SERVER['REMOTE_ADDR'] != $websiteIp && strstr($current_url, 'preview=true') == false) {
         if ($debug) {
             echo "<!-- displaying page without cache -->\n";
         }
