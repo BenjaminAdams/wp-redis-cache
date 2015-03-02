@@ -45,12 +45,10 @@ function clear_wp_redis_cache_javascript() {
 ?>
 <script type="text/javascript" >
 jQuery(document).ready(function($) {
-
 	jQuery('#WPRedisClearCache').click(function(){
 		var data = {
 			action: 'clear_wp_redis_cache'
 		};
-
 		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 		$.post(ajaxurl, data, function(response) {
 			alert(response);
@@ -61,4 +59,3 @@ jQuery(document).ready(function($) {
 <?php 
 }
 ?>
-
