@@ -24,9 +24,8 @@ function refresh_wp_redis_cache( $new, $old, $post )
 	if($new == "publish")
 	{
         $redis = get_redis_server();
-        $redis->del(${_SERVER['HTTP_HOST']}.'_*');
-        $redis->del("ssl_".${_SERVER['HTTP_HOST']}.'_*');
-        // Loop all posts and clear the cache
+        $redis->del($_SERVER['HTTP_HOST'].'_*');
+        $redis->del("ssl_".$_SERVER['HTTP_HOST'].'_*');
 	}
 }
 
@@ -34,8 +33,8 @@ function refresh_wp_redis_cache( $new, $old, $post )
 function clear_wp_redis_cache()
 {
     $redis = get_redis_server();
-    $redis->del(${_SERVER['HTTP_HOST']}.'_*');
-    $redis->del("ssl_".${_SERVER['HTTP_HOST']}.'_*');
+    $redis->del($_SERVER['HTTP_HOST'].'_*');
+    $redis->del("ssl_".$_SERVER['HTTP_HOST'].'_*');
 	
 	echo " of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
 	die();
