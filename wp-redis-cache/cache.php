@@ -4,7 +4,7 @@ add_action('transition_post_status', 'refresh_wp_redis_cache',10,3);
 add_action('wp_ajax_clear_wp_redis_cache', 'clear_wp_redis_cache');
 add_action( 'admin_footer', 'clear_wp_redis_cache_javascript' );
 
-private function get_redis_server() {
+function get_redis_server() {
     if (class_exists('Redis')) {
         $redis_server = get_option('wp-redis-cache-server');
         $redis = new Redis();
