@@ -42,7 +42,11 @@ function edit_redis_options() {
 	<p>This plugin does not work out of the box and requires additional steps.<br />
 	Please follow these install instructions: <a target='_blank' href='https://github.com/BenjaminAdams/wp-redis-cache'>https://github.com/BenjaminAdams/wp-redis-cache</a></p>
 
-    <p><strong>Redis-Server</strong><br />
+    <p><strong>Debug:</strong><br />
+	If this options set debug text are published in html.<br />
+    <input type="checkbox" name="wp-redis-cache-debug" size="45" <?php checked('true', get_option('wp-redis-cache-debug')); ?>/></p>
+
+    <p><strong>Redis-Server:</strong><br />
 	If Redis-Server is not on the same machine as the wordpress-instance<br />
     <input type="text" name="wp-redis-cache-server" size="45" value="<?php echo get_option('wp-redis-cache-server'); ?>" /></p>
 

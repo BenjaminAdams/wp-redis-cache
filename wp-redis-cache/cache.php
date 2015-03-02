@@ -23,19 +23,21 @@ function refresh_wp_redis_cache( $new, $old, $post )
 
 	if($new == "publish")
 	{
-		$permalink = get_permalink( $post->ID );
+        $args = array( 'post_type' => 'any', 'posts_per_page' => -1);
+        $wp_query = new WP_Query( $args); // to get all Posts
+        $redis = get_redis_server();
+        // Loop all posts and clear the cache
+        $i = 0;
+        while ( $wp_query->have_posts() ) : $wp_query->the_post();
+            $permalink = get_permalink();
 
-        $redis = get_redis_server() 
-
-		$redis_key = md5($permalink);
-		$redis->del($redis_key);
-    $redis->del("ssl_".$redis_key);
-
-		//refresh the front page
-		$frontPage = get_home_url() . "/";
-		$redis_key = md5($frontPage);
-		$redis->del($redis_key);
-    $redis->del("ssl_".$redis_key);
+            $redis_key = md5($permalink);
+            if (($redis->exists($redis_key)) == true ) {
+                $redis->del($redis_key);
+                $redis->del("ssl_".$redis_key);
+                $i++; 
+            }
+        endwhile;
 	}
 }
 
@@ -44,7 +46,6 @@ function clear_wp_redis_cache()
 {
 	$args = array( 'post_type' => 'any', 'posts_per_page' => -1);
 	$wp_query = new WP_Query( $args); // to get all Posts
-    $redis = get_redis_server()
 	// Loop all posts and clear the cache
 	$i = 0;
 	while ( $wp_query->have_posts() ) : $wp_query->the_post();
