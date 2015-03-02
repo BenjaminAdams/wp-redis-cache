@@ -1,6 +1,5 @@
 <?php
 
-$debug          = true;
 $cache          = true;
 $websiteIp      = '127.0.0.1';
 // if you use sockets, set this to true and use $redis_server for socket path
