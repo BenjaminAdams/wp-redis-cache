@@ -23,45 +23,21 @@ function refresh_wp_redis_cache( $new, $old, $post )
 
 	if($new == "publish")
 	{
-        $args = array( 'post_type' => 'any', 'posts_per_page' => -1);
-        $wp_query = new WP_Query( $args); // to get all Posts
         $redis = get_redis_server();
+        $redis->del(${_SERVER['HTTP_HOST']}.'_*');
+        $redis->del("ssl_".${_SERVER['HTTP_HOST']}.'_*');
         // Loop all posts and clear the cache
-        $i = 0;
-        while ( $wp_query->have_posts() ) : $wp_query->the_post();
-            $permalink = get_permalink();
-
-            $redis_key = md5($permalink);
-            if (($redis->exists($redis_key)) == true ) {
-                $redis->del($redis_key);
-                $redis->del("ssl_".$redis_key);
-                $i++; 
-            }
-        endwhile;
 	}
 }
 
 // clears the whole cache
 function clear_wp_redis_cache()
 {
-	$args = array( 'post_type' => 'any', 'posts_per_page' => -1);
-	$wp_query = new WP_Query( $args); // to get all Posts
-	// Loop all posts and clear the cache
-	$i = 0;
-	while ( $wp_query->have_posts() ) : $wp_query->the_post();
-		$permalink = get_permalink();
-
-		$redis_key = md5($permalink);
-		if (($redis->exists($redis_key)) == true ) {
-			$redis->del($redis_key);
-      $redis->del("ssl_".$redis_key);
-			$i++; 
-		}
-		
-		
-	endwhile;
+    $redis = get_redis_server();
+    $redis->del(${_SERVER['HTTP_HOST']}.'_*');
+    $redis->del("ssl_".${_SERVER['HTTP_HOST']}.'_*');
 	
-	echo $i++." of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
+	echo " of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
 	die();
 }
 
