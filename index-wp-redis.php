@@ -43,6 +43,7 @@ $current_url    = getCleanUrl($secret_string);
 // used to prefix ssl cached pages
 $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
 $redis_key      = $_SERVER['HTTP_HOST'].'_'.$isSSL.md5($current_url);
+require( $wp_blog_header_path );
 $debug = get_option('wp-redis-cache-debug',false);
 
 handleCDNRemoteAddressing();
@@ -93,7 +94,6 @@ try {
         }
         $redis->del($redis_key);
         $redis->del("ssl_".$redis_key);
-        require( $wp_blog_header_path );
 
          
         $unlimited = get_option('wp-redis-cache-unlimited',false);
