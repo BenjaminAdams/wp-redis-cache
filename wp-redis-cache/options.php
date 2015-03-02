@@ -61,7 +61,7 @@ function edit_redis_options() {
     <p><input type="submit" name="Submit" value="Update Options" /></p>
 	<p><input type="button" id="WPRedisClearCache" name="WPRedisClearCache" value="Clear Cache"></p>
     <input type="hidden" name="action" value="update" />
-    <input type="hidden" name="page_options" value="wp-redis-cache-seconds,wp-redis-cache-unlimited" />
+    <input type="hidden" name="page_options" value="wp-redis-cache-debug,wp-redis-cache-server,wp-redis-cache-seconds,wp-redis-cache-unlimited" />
 
     </form>
     </div>
