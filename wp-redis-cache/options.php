@@ -41,8 +41,10 @@ function edit_redis_options() {
 	
 	<p>This plugin does not work out of the box and requires additional steps.<br />
 	Please follow these install instructions: <a target='_blank' href='https://github.com/BenjaminAdams/wp-redis-cache'>https://github.com/BenjaminAdams/wp-redis-cache</a></p>
-	
-	<p>If you do not have Redis installed on your machine this will NOT work! </p>
+
+    <p><strong>Redis-Server</strong><br />
+	If Redis-Server is not on the same machine as the wordpress-instance<br />
+    <input type="text" name="wp-redis-cache-server" size="45" value="<?php echo get_option('wp-redis-cache-server'); ?>" /></p>
 
     <p><strong>Seconds of Caching:</strong><br />
 	How many seconds would you like to cache?  *Recommended 12 hours or 43200 seconds <br />
