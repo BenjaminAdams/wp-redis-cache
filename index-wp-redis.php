@@ -108,6 +108,7 @@ try {
         echo $html_of_page;
 
      // If the cache does not exist lets display the user the normal page without cache, and then fetch a new cache page
+    } else if ($_SERVER['REMOTE_ADDR'] != $websiteIp && strstr($current_url, 'preview=true') == false) {
         if ($debug) {
             echo "<!-- displaying page without cache -->\n";
         }
@@ -144,6 +145,9 @@ try {
     } else if ($_SERVER['REMOTE_ADDR'] != $websiteIp && strstr($current_url, 'preview=true') == true) {
         require( $wp_blog_header_path );
     } else {
+        if ($debug) {
+            echo "<!-- Output UNCACHED-->\n";
+        }
         require( $wp_blog_header_path );
     }
      // else {   // This is what your server should get if no cache exists  //deprecated, as the ob_start() is cleaner
