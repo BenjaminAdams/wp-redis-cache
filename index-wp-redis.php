@@ -143,6 +143,8 @@ try {
         
     } else if ($_SERVER['REMOTE_ADDR'] != $websiteIp && strstr($current_url, 'preview=true') == true) {
         require( $wp_blog_header_path );
+    } else {
+        require( $wp_blog_header_path );
     }
      // else {   // This is what your server should get if no cache exists  //deprecated, as the ob_start() is cleaner
         //require( $wp_blog_header_path );
