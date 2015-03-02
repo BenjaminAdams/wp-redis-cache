@@ -20,13 +20,9 @@ function get_redis_server() {
 //clears the cache after you update a post
 function refresh_wp_redis_cache( $new, $old, $post )
 {
-
-	if($new == "publish")
-	{
-        $redis = get_redis_server();
-        $redis->del($_SERVER['HTTP_HOST'].'_*');
-        $redis->del("ssl_".$_SERVER['HTTP_HOST'].'_*');
-	}
+    $redis = get_redis_server();
+    $redis->del($_SERVER['HTTP_HOST'].'_*');
+    $redis->del("ssl_".$_SERVER['HTTP_HOST'].'_*');
 }
 
 // clears the whole cache
