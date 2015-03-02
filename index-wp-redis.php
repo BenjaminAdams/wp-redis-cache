@@ -1,5 +1,6 @@
 <?php
 
+require_once("wp-redis-config.php")
 // Start the timer so we can track the page load time
 $start = microtime();
 
@@ -38,14 +39,6 @@ function getCleanUrl($secret) {
 }
 
 $wp_blog_header_path = dirname( __FILE__ ) . '/wp-blog-header.php';
-$debug          = true;
-$cache          = true;
-$websiteIp      = '127.0.0.1';
-// if you use sockets, set this to true and use $redis_server for socket path
-$sockets        = false;
-// in case of sockets something like /home/user/.redis/sock
-$redis_server   = '127.0.0.1';
-$secret_string  = 'changeme';
 $current_url    = getCleanUrl($secret_string);
 // used to prefix ssl cached pages
 $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
