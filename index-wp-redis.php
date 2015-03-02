@@ -155,6 +155,7 @@ $time = (@getMicroTime($end) - @getMicroTime($start));
 if ($debug) {
     echo "<!-- Cache system by Benjamin Adams. Page generated in " . round($time, 5) . " seconds. -->\n";
     echo "<!-- Site was cached  = " . $cache . " -->\n";
+    echo "<!-- wp-redis-cache-key  = " . $redis_key . "-->\n";
     if (isset($seconds_cache_redis)) {
         echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->\n";
     }
