@@ -29,7 +29,7 @@ Author URI: http://dudelol.com
 add_action('admin_menu', 'add_redis_interface');
 
 function add_redis_interface() {
-    add_options_page('Wp Redis Cache', 'Wp Redis Cache', '8', 'functions', 'edit_redis_options');
+    add_options_page('Wp Redis Cache', 'Wp Redis Cache', 'manage_options', 'functions', 'edit_redis_options');
 }
 
 function edit_redis_options() {
