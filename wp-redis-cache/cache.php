@@ -33,23 +33,33 @@ function clear_wp_redis_cache()
 	include_once("predis5.2.php"); //we need this to use Redis inside of PHP
 	$args = array( 'post_type' => 'any', 'posts_per_page' => -1);
 	$wp_query = new WP_Query( $args); // to get all Posts
-	$redis = new Predis_Client();
+    $redis = new Predis_Client();
+
 	// Loop all posts and clear the cache
 	$i = 0;
 	while ( $wp_query->have_posts() ) : $wp_query->the_post();
+		$incremented = false;
 		$permalink = get_permalink();
 
 		$redis_key = md5($permalink);
-		if (($redis->exists($redis_key)) == true ) {
-			$redis->del($redis_key);
-      $redis->del("ssl_".$redis_key);
-			$i++; 
+		$redis_ssl_key = 'ssl_'.$redis_key;
+
+		if ( ( $redis->exists( $redis_key ) ) == true  ) {
+			$redis->del( $redis_key );
+			$i++;
+			$incremented = true;
+		}
+		if ( ( $redis->exists( $redis_ssl_key ) ) == true ) {
+			$redis->del( $redis_ssl_key );
+			if ( !$incremented ) {
+      			$i++;
+      		}
 		}
 		
 		
 	endwhile;
 	
-	echo $i++." of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
+	echo $i . " of " . $wp_query  -> found_posts . " posts was cleared in cache"; 
 	die();
 }
 
