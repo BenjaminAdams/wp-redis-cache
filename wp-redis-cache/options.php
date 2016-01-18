@@ -49,7 +49,7 @@ function edit_redis_options() {
     <input type="text" name="wp-redis-cache-seconds" size="45" value="<?php echo get_option('wp-redis-cache-seconds'); ?>" /></p>
  
     <p><strong>Cache unlimited:</strong><br />
-		If this options set the cache never expire. This option overiedes the setting "Seconds of Caching"<br />
+		If this options set the cache never expire. This option overrides the setting "Seconds of Caching"<br />
     <input type="checkbox" name="wp-redis-cache-unlimited" size="45" value="true" <?php checked('true', get_option('wp-redis-cache-unlimited')); ?>/></p>
 	  
     <p><input type="submit" name="Submit" value="Update Options" /></p>
