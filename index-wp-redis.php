@@ -155,6 +155,7 @@ try {
     // }
 } catch (Exception $e) {
     //require( $wp_blog_header_path );
+    http_response_code(500);
     echo "Something went wrong: " . $e->getMessage();
 }
 
