@@ -49,6 +49,7 @@ $secret_string  = 'changeme';
 $current_url    = getCleanUrl($secret_string);
 // used to prefix ssl cached pages
 $isSSL = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) ? "ssl_" : "";
+$isLoggedIn = preg_match("/wordpress_logged_in/", var_export($_COOKIE, true));
 $redis_key      = $isSSL.md5($current_url);
 
 handleCDNRemoteAddressing();
@@ -104,7 +105,7 @@ try {
         $unlimited = get_option('wp-redis-cache-debug',false);
         $seconds_cache_redis = get_option('wp-redis-cache-seconds',43200);
     // This page is cached, lets display it
-    } else if ($redis->exists($redis_key)) {
+    } else if ($redis->exists($redis_key) && !$isLoggedIn) {
         if ($debug) {
             echo "<!-- serving page from cache: key: $redis_key -->\n";
         }
@@ -120,8 +121,7 @@ try {
         
         $isPOST = ($_SERVER['REQUEST_METHOD'] === 'POST') ? 1 : 0;
         
-        $loggedIn = preg_match("/wordpress_logged_in/", var_export($_COOKIE, true));
-        if (!$isPOST && !$loggedIn) {
+        if (!$isPOST && !$isLoggedIn) {
             ob_start();
             $level = ob_get_level();
             require( $wp_blog_header_path );
@@ -168,6 +168,7 @@ if ($debug) {
     if (isset($seconds_cache_redis)) {
         echo "<!-- wp-redis-cache-seconds  = " . $seconds_cache_redis . " -->\n";
     }
+    echo "<!-- is logged in? " . $isLoggedIn . "-->\n";
     echo "<!-- wp-redis-cache-secret  = " . $secret_string . "-->\n";
     echo "<!-- wp-redis-cache-ip  = " . $websiteIp . "-->\n";
     if (isset($unlimited)) {
